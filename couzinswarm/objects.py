@@ -7,7 +7,7 @@ Contains the `Fish` class and in the future some other objects maybe.
 
 import numpy as np
 
-from couzinswarm.tools import rotate_towards, cart2sphere, sphere2cart
+from couzinswarm.tools import rotate_towards #, cart2sphere, sphere2cart
 
 class Fish:
     """A class containing information about a single fish.
@@ -56,7 +56,6 @@ class Fish:
         """
 
         self.position = position
-
         if direction is None:
             self.direction = np.random.randn(3)
             self.direction /= np.linalg.norm(self.direction)
@@ -115,7 +114,7 @@ class Fish:
             unit vector pointing to the other fish
         """
 
-        self.d_a += self.d_a + r_ij
+        self.d_a += r_ij
         self.n_a += 1
 
     def evaluate_direction(self,thetatau,sigma):
@@ -138,7 +137,7 @@ class Fish:
             unit vector of the evaluated new direction
         """
 
-        no_new_d = False
+        #no_new_d = False
 
         if self.n_r > 0:
             new_d = self.d_r
@@ -150,7 +149,7 @@ class Fish:
             new_d = self.d_a
         else:
             new_d = self.direction
-
+        #print("new direction: "+str(new_d))
         if self.verbose:
             print("Fish", self.ID)
             print("    direction:", self.direction)
@@ -159,23 +158,54 @@ class Fish:
             print("    attraction:", self.n_a, self.d_a)
             print("    new_d:",new_d)
 
-        # get spherical coordinates of directions and add some noise to the angles
-        _theta, _phi = cart2sphere(new_d)
-        _theta += sigma * np.random.randn()
-        _phi += sigma * np.random.randn()
-        self.new_d = sphere2cart(_theta, _phi)
-        self.new_d /= np.linalg.norm(self.new_d)
+        #print("new direction after conversion: "+str(new_d))
+        norm = np.linalg.norm(new_d)
+        #print("norm: "+str(norm))
+        if norm > 1e-5:  # Check for non-zero norm to avoid division by zero
+            self.new_d = new_d / norm
+            # get spherical coordinates of directions and add some noise to the angles
+            # _rho,_theta, _phi = cart2sphere(self.new_d)
+            # _theta += sigma * np.random.randn()
+            # _phi += sigma * np.random.randn()
+            # self.new_d = sphere2cart(1,_theta, _phi)
+            # #print("after normalization: "+str(self.new_d))
+        else:
+            self.new_d = self.direction  # Fallback to the current direction if zero vector
+        # Convert velocity to spherical coordinates
+        #speed = np.linalg.norm(velocity)
+        phi = np.arccos(self.new_d[2])  # Polar angle
+        theta = np.arctan2(self.new_d[1], self.new_d[0])  # Azimuthal angle
 
+        # Apply noise
+        phi_noisy = phi + sigma * np.random.randn()
+        theta_noisy = theta + sigma * np.random.randn()
+
+        # Convert back to Cartesian coordinates
+        self.new_d = np.array([
+             np.sin(phi_noisy) * np.cos(theta_noisy),
+             np.sin(phi_noisy) * np.sin(theta_noisy),
+             np.cos(phi_noisy)
+        ])
+
+        # self.new_d += sigma*np.random.randn(3)
+        # norm = np.linalg.norm(self.new_d)
+        # self.new_d = np.array(self.new_d) / norm
         # if the angle between old and new directions is larger than allowed
         # per step size, rotate the current direction towards the new direction by
         # the maximum radians per step size
         angle = np.arccos(np.clip(np.dot(self.new_d, self.direction), -1.0, 1.0))
+        #print("angle: "+str(angle))
+        #print("turning rate: "+str(thetatau))
         if angle > thetatau:
             self.new_d = rotate_towards(self.direction, self.new_d, thetatau)
-
+            #print("restricted new d: "+str(self.new_d))
         if self.verbose:
             print("    after noise and rotation:",new_d)
 
         self.reset_direction_influences()
-
+        #print("new direction in the end: "+str(self.new_d))
+        norm = np.linalg.norm(self.new_d)
+        if np.abs(norm - 1) > 1e-5:
+            print("self.new_d is not properly normalized!")
+            print("new_d = "+str(self.new_d))
         return self.new_d
