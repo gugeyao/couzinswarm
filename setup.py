@@ -7,7 +7,7 @@ exec(open("./couzinswarm/metadata.py").read())
 setup(name='couzinswarm',
       version=__version__,
       description="Simulating fish swarming behavior with the model by Iain Couzin et al.",
-      url='https://www.github.com/benmaier/couzinswarm',
+      url='https://www.github.com/gugeyao/couzinswarm',
       author=__author__,
       author_email=__email__,
       license=__license__,

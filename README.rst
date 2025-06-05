@@ -2,9 +2,7 @@ couzinswarm
 ===========
 
 Simulate fish swarming behavior with the model by `Iain Couzin et
-al. <https://www.sciencedirect.com/science/article/pii/S0022519302930651>`__
-Use with caution as I can't seem to replicate some behavior (e.g. the
-torus swarming).
+al. <https://www.sciencedirect.com/science/article/pii/S0022519302930651>`__. This version includes bug fixes and improvements to the original implementation, particularly addressing issues with torus swarming and other collective behaviors.
 
 Example
 -------
@@ -76,4 +74,9 @@ Elaborate example
         ax.plot(r[i,:,0], r[i,:,1], r[i,:,2])
 
     pl.show()
+
+Acknowledgments
+--------------
+
+This project is a fork of the original `couzinswarm <https://github.com/benmaier/couzinswarm>`_ package created by Benjamin F. Maier. The original implementation provided the foundation for this work, and we are grateful for his contribution to the open-source community. This fork maintains the MIT License of the original project.
 

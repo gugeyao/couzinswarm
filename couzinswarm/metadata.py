@@ -5,10 +5,10 @@ Contains a bunch of information about this package.
 
 __version__ = "0.0.3"
 
-__author__ = "Benjamin F. Maier"
-__copyright__ = "Copyright 2019, Benjamin F. Maier"
-__credits__ = ["Benjamin F. Maier"]
+__author__ = "Geyao Gu"
+__copyright__ = "Copyright 2024, Geyao Gu"
+__credits__ = ["Benjamin F. Maier", "Geyao Gu"]
 __license__ = "MIT"
-__maintainer__ = "Benjamin F. Maier"
-__email__ = "bfmaier@physik.hu-berlin.de"
+__maintainer__ = "Geyao Gu"
+__email__ = "gugeyao24@gmail.com"
 __status__ = "Development"
